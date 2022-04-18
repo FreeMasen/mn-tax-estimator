@@ -113,7 +113,6 @@ function calculate_taxable_income(
     credits,
 ) {
     console.log("calculate_taxable_income", total_income, filing_method, deductions, credits);
-    console.log("total deductions", deductions)
     if (!credits) {
         credits = 0;
     }
@@ -143,20 +142,34 @@ function calculate_remaining_pay_periods(
             return (months_left * 2) + remaining_in_month;
         }
         case "bi_weekly":{
+            let current_year = last_pay_date.getFullYear()
             let periods_next_year = 0;
             let ret = 0;
-            while (periods_next_year < 2) {
-                
+            while (periods_next_year < 1) {
+                last_pay_date.setDate(last_pay_date.getDate() + 14);
+                if (last_pay_date.getFullYear() > current_year) {
+                    periods_next_year += 1;
+                }
+                ret += 1;
             }
-            break;
+            return ret;
         }
         case "monthly":{
-
-            break;
+            return 12 - (last_pay_date.getMonth() + 1)
         }
         case "weekly":
         default: {
-            break;
+            let current_year = last_pay_date.getFullYear()
+            let periods_next_year = 0;
+            let ret = 0;
+            while (periods_next_year < 1) {
+                last_pay_date.setDate(last_pay_date.getDate() + 7);
+                if (last_pay_date.getFullYear() > current_year) {
+                    periods_next_year += 1;
+                }
+                ret += 1;
+            }
+            return ret;
         }
     }
 }
@@ -183,6 +196,8 @@ let ytd_el = document.getElementById("paid-so-far");
 let per_pay_el = document.getElementById("paying-per-period");
 /**@type HTMLSelectElement */
 let cadence_el = document.getElementById("period-cadence");
+/**@type HTMLInputElement */
+let last_paid_el = document.getElementById("last-pay-date");
 /**@type HTMLSpanElement */
 let ytd_total_el = document.getElementById("paid-so-far-total");
 /**@type HTMLSpanElement */
@@ -193,6 +208,15 @@ let periods_remaining_el = document.getElementById("pay-periods-remaining");
 let projected_el = document.getElementById("projected-to-pay");
 /**@type HTMLSpanElement */
 let expected_with_el = document.getElementById("expected-withholding");
+/**@type HTMLSpanElement */
+let total_owed_el = document.getElementById("total-owed");
+/**@type HTMLSpanElement */
+let expected_final_el = document.getElementById("total-withheld");
+/**@type HTMLSpanElement */
+let consequence_el = document.getElementById("consequence");
+/**@type HTMLSpanElement */
+let amount_el = document.getElementById("consequence-amount");
+
 
 register_input_el(income_el);
 register_input_el(deductions_el);
@@ -201,6 +225,7 @@ register_input_el(per_pay_el);
 register_input_el(ytd_el);
 register_input_el(ytd_el);
 register_input_el(cadence_el);
+register_input_el(last_paid_el);
 
 /**
  * 
@@ -236,8 +261,12 @@ function element_value_as_number(el) {
     }
 }
 
+function format_money(value) {
+    return (value || 0).toLocaleString("en-us", {style: "currency", currency: "USD"});
+}
 
 function update() {
+    console.log("update");
     let total_income = element_value_as_number(income_el);
     let total_deductions = element_value_as_number(deductions_el);
     let total_credits = element_value_as_number(credits_el);
@@ -249,10 +278,35 @@ function update() {
         actual_deductions,
         total_credits
     );
-    final_total_el.innerText = total_income.toLocaleString("en-us", {style: "currency", currency: "USD"});
-    final_deductions_el.innerText = (-actual_deductions).toLocaleString("en-us", {style: "currency", currency: "USD"});
-    final_credits_el.innerText = (total_credits > 0 ? -total_credits : 0).toLocaleString("en-us", {style: "currency", currency: "USD"});
-    taxable_income_el.innerText = taxable.toLocaleString("en-us", {style: "currency", currency: "USD"});
+    console.log("taxable", taxable);
+    final_total_el.innerText = format_money(total_income);
+    final_deductions_el.innerText = format_money(-actual_deductions);
+    final_credits_el.innerText = format_money(total_credits > 0 ? -total_credits : 0);
+    taxable_income_el.innerText = format_money(taxable);
+    
+    let ytd_withheld = element_value_as_number(ytd_el);
+    let ppp_withheld = element_value_as_number(per_pay_el);
+    let cadence = cadence_el.selectedOptions[0].value;
+    let last_pay_date = (last_paid_el.valueAsDate || new Date());
+    let pays_remaining = calculate_remaining_pay_periods(cadence, last_pay_date);
+    console.log("pays_remaining", pays_remaining);
+    ytd_total_el.innerText = format_money(ytd_withheld);
+    per_pay_total_el.innerText = format_money(ppp_withheld);
+    periods_remaining_el.innerText = pays_remaining;
+    let projected = ppp_withheld * pays_remaining;
+    projected_el.innerText = format_money(projected);
+    let expected_total = projected + ytd_withheld;
+    expected_with_el.innerText = format_money(expected_total);
+    
+    let total_owed = calculate_taxes_owed(taxable, filing_method);
+    total_owed_el.innerText = format_money(total_owed);
+    expected_final_el.innerText = format_money(expected_total);
+    if (total_owed < expected_total) {
+        consequence_el.innerText = "Return!";
+    } else {
+        consequence_el.innerText = "OWE!!!";
+    }
+    amount_el.innerText = format_money(expected_total - total_owed);
 }
 
 update();

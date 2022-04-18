@@ -1,131 +1,138 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
-    </head>
-    <body>
-        <header class="container" style="text-align:center">
-            <h1>MN Tax Estimator</h1>
-        </header>
-        <main class="container">
-            <form class="grid">
-                <label for="total-income">
-                    Total Income
-                    <input aria-controls="final-total-income final-deduction taxable-income" type="text" name="total-income" min="0" id="total-income">
-                </label>
-                <label for="total-deductions">
-                    Total Deductions
-                    <input aria-controls="final-deduction taxable-income" type="text" name="total-deductions" min="0" id="total-deductions">
-                </label>
-                <label for="total-deductions">
-                    Other Credits
-                    <input aria-controls="final-credits taxable-income" type="text" name="other-credits" min="0" id="other-credits">
-                </label>
-                <label for="filing-method">
-                    Filing Method
-                    <select aria-controls="final-total-income final-deduction taxable-income" id="filing-method" name="filing-method">
-                        <option value="married_joint">Married Filing Jointly</option>
-                        <option value="married_sep">Married Filing Separately</option>
-                        <option value="single">Single</option>
-                        <option value="head_of_household">Head of Household</option>
-                    </select>
-                </label>
-            </form>
-            <table aria-live="polite">
-                <tbody>
-                    <tr>
-                        <th>Total Income</th>
-                        <td>
-                            <span id="final-total-income">0</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Final Deduction</th>
-                        <td>
-                            <span id="final-deduction">0</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Final Credits</th>
-                        <td>
-                            <span id="final-credits">0</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Taxable Income</th>
-                        <td>
-                            <span id="taxable-income">0</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <form>
-                <label for="paid-so-far">
-                    Withheld YTD
-                    <input type="text" min="0" id="paid-so-far" name="paid-so-far">
-                </label>
-                <label for="paying-per-period">
-                    Withheld Per Pay Period
-                    <input type="text" min="0" id="paying-per-period" name="paying-per-period">
-                </label>
-                <label for="period-cadence">
-                    <select id="period-cadence" name="period-cadence">
-                        <option value="twice_monthly">Twice Monthly</option>
-                        <option value="bi_weekly">Bi Weekly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="weekly">Weekly</option>
-                    </select>
-                </label>
-                <label for="last-pay-date">
-                    Last Pay Date
-                    <input type="date" id="last-pay-date" name="last-pay-date">
-                </label>
-            </form>
-            <table>
-                <tbody>
-                    <tr>
-                        <th>Payed YTD</th>
-                        <td id="paid-so-far-total">0</td>
-                    </tr>
-                    <tr>
-                        <th>Paying Per Pay Period</th>
-                        <td id="paying-per-period-total">0</td>
-                    </tr>
-                    <tr>
-                        <th>Pay Periods Remaining</th>
-                        <td id="pay-periods-remaining">52</td>
-                    </tr>
-                    <tr>
-                        <th>Projected to Pay (Pay Periods Remaining * Paying Per Pay Period)</th>
-                        <td id="projected-to-pay">0</td>
-                    </tr>
-                    <tr>
-                        <th>Expected Withholding</th>
-                        <td id="expected-withholding">0</td>
-                    </tr>
-                </tbody>
-            </table>
-            <table>
-                <tbody>
-                    <tr>
-                        <th>Total Owed</th>
-                        <td id="total-owed">0</td>
-                    </tr>
-                    <tr>
-                        <th>Total Withheld</th>
-                        <td id="total-withheld">0</td>
-                    </tr>
-                    <tr>
-                        <th>Consequence</th>
-                        <td id="consequence">Return!</td>
-                    </tr>
-                    <tr>
-                        <th>Amount</th>
-                        <td id="consequence-amount">Return!</td>
-                    </tr>
-                </tbody>
-            </table>
-        </main>
-        <script src="index.js" type="text/javascript"></script>
-    </body>
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+</head>
+
+<body>
+    <header class="container" style="text-align:center">
+        <h1>MN Tax Estimator</h1>
+    </header>
+    <main class="container">
+        <form class="grid">
+            <label for="total-income">
+                Total Income
+                <input aria-controls="final-total-income final-deduction taxable-income" type="text" name="total-income"
+                    min="0" id="total-income">
+            </label>
+            <label for="total-deductions">
+                Total Deductions
+                <input aria-controls="final-deduction taxable-income" type="text" name="total-deductions" min="0"
+                    id="total-deductions">
+            </label>
+            <label for="total-deductions">
+                Other Credits
+                <input aria-controls="final-credits taxable-income" type="text" name="other-credits" min="0"
+                    id="other-credits">
+            </label>
+            <label for="filing-method">
+                Filing Method
+                <select aria-controls="final-total-income final-deduction taxable-income" id="filing-method"
+                    name="filing-method">
+                    <option value="married_joint">Married Filing Jointly</option>
+                    <option value="married_sep">Married Filing Separately</option>
+                    <option value="single">Single</option>
+                    <option value="head_of_household">Head of Household</option>
+                </select>
+            </label>
+        </form>
+        <table aria-live="polite">
+            <tbody>
+                <tr>
+                    <th>Total Income</th>
+                    <td>
+                        <span id="final-total-income">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Final Deduction</th>
+                    <td>
+                        <span id="final-deduction">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Final Credits</th>
+                    <td>
+                        <span id="final-credits">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Taxable Income</th>
+                    <td>
+                        <span id="taxable-income">0</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <form>
+            <label for="paid-so-far">
+                Withheld YTD
+                <input type="text" min="0" id="paid-so-far" name="paid-so-far">
+            </label>
+            <label for="paying-per-period">
+                Withheld Per Pay Period
+                <input type="text" min="0" id="paying-per-period" name="paying-per-period">
+            </label>
+            <label for="period-cadence">
+                <select id="period-cadence" name="period-cadence">
+                    <option value="twice_monthly">Twice Monthly</option>
+                    <option value="bi_weekly">Bi Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                </select>
+            </label>
+            <label for="last-pay-date">
+                Last Pay Date
+                <input type="date" id="last-pay-date" name="last-pay-date">
+            </label>
+        </form>
+        <table>
+            <tbody>
+                <tr>
+                    <th>Payed YTD</th>
+                    <td id="paid-so-far-total">0</td>
+                </tr>
+                <tr>
+                    <th>Paying Per Pay Period</th>
+                    <td id="paying-per-period-total">0</td>
+                </tr>
+                <tr>
+                    <th>Pay Periods Remaining</th>
+                    <td id="pay-periods-remaining">52</td>
+                </tr>
+                <tr>
+                    <th>Projected to Pay (Pay Periods Remaining * Paying Per Pay Period)</th>
+                    <td id="projected-to-pay">0</td>
+                </tr>
+                <tr>
+                    <th>Expected Withholding</th>
+                    <td id="expected-withholding">0</td>
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <tbody>
+                <tr>
+                    <th>Total Owed</th>
+                    <td id="total-owed">0</td>
+                </tr>
+                <tr>
+                    <th>Total Withheld</th>
+                    <td id="total-withheld">0</td>
+                </tr>
+                <tr>
+                    <th>Consequence</th>
+                    <td id="consequence">Return!</td>
+                </tr>
+                <tr>
+                    <th>Amount</th>
+                    <td id="consequence-amount">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <script src="index.js" type="text/javascript"></script>
+</body>
+
 </html>
